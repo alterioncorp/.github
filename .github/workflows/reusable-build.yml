@@ -1,0 +1,37 @@
+name: Reusable Build
+
+on:
+  workflow_call:
+    inputs:
+      mvn-goal:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Download Maven settings
+        run: |
+          mkdir -p ~/.m2
+          curl -sL https://raw.githubusercontent.com/alexlitovsky/.github/main/maven/settings.xml \
+            -o ~/.m2/settings.xml
+
+      - name: Run Maven
+        run: mvn ${{ inputs.mvn-goal }}
+        env:
+          MAVEN_USERNAME: ${{ github.actor }}
+          MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
