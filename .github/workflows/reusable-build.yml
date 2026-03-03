@@ -6,6 +6,10 @@ on:
       mvn-goal:
         required: true
         type: string
+      setup-gpg:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -24,10 +28,16 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Import GPG key
+        if: ${{ inputs.setup-gpg }}
+        run: echo "$GPG_PRIVATE_KEY" | gpg --import --batch
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
       - name: Download Maven settings
         run: |
           mkdir -p ~/.m2
-          curl -sL https://raw.githubusercontent.com/alexlitovsky/.github/main/maven/settings.xml \
+          curl -sL https://raw.githubusercontent.com/alterioncorp/.github/main/maven/settings.xml \
             -o ~/.m2/settings.xml
 
       - name: Run Maven
@@ -35,3 +45,6 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ github.actor }}
           MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

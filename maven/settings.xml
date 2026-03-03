@@ -7,6 +7,15 @@
       <username>${env.MAVEN_USERNAME}</username>
       <password>${env.MAVEN_TOKEN}</password>
     </server>
+    <server>
+      <id>central</id>
+      <username>${env.CENTRAL_USERNAME}</username>
+      <password>${env.CENTRAL_TOKEN}</password>
+    </server>
+    <server>
+      <id>gpg.passphrase</id>
+      <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+    </server>
   </servers>
   <profiles>
     <profile>
@@ -14,7 +23,7 @@
       <repositories>
         <repository>
           <id>github</id>
-          <url>https://maven.pkg.github.com/alexlitovsky/*</url>
+          <url>https://maven.pkg.github.com/alterioncorp/*</url>
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
